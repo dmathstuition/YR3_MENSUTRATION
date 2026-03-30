@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Measurement Adventure! 🌟</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+
+  :root {
+    --sky: #4FC3F7;
+    --sun: #FFD600;
+    --grass: #66BB6A;
+    --ground: #8D6E63;
+    --coral: #FF6B6B;
+    --mint: #4ECDC4;
+    --purple: #9C27B0;
+    --orange: #FF9800;
+    --pink: #E91E63;
+    --white: #FFFDE7;
+    --dark: #1A237E;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(180deg, #87CEEB 0%, #B3E5FC 40%, #C8E6C9 40%, #A5D6A7 60%, #8D6E63 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* === CLOUDS === */
+  .cloud {
+    position: fixed;
+    background: white;
+    border-radius: 50px;
+    opacity: 0.85;
+    animation: floatCloud linear infinite;
+  }
+  .cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+  }
+  .cloud1 { width: 120px; height: 40px; top: 8%; animation-duration: 28s; animation-delay: 0s; }
+  .cloud1::before { width: 60px; height: 60px; top: -30px; left: 15px; }
+  .cloud1::after { width: 40px; height: 40px; top: -20px; left: 55px; }
+  .cloud2 { width: 80px; height: 30px; top: 15%; animation-duration: 22s; animation-delay: -10s; }
+  .cloud2::before { width: 40px; height: 40px; top: -20px; left: 10px; }
+  .cloud2::after { width: 30px; height: 30px; top: -15px; left: 40px; }
+  .cloud3 { width: 100px; height: 35px; top: 5%; animation-duration: 35s; animation-delay: -18s; }
+  .cloud3::before { width: 50px; height: 50px; top: -25px; left: 12px; }
+  .cloud3::after { width: 35px; height: 35px; top: -18px; left: 48px; }
+  @keyframes floatCloud {
+    from { left: -200px; }
+    to { left: 110%; }
+  }
+
+  /* === SUN === */
+  .sun {
+    position: fixed;
+    top: 20px;
+    right: 40px;
+    width: 70px;
+    height: 70px;
+    background: var(--sun);
+    border-radius: 50%;
+    box-shadow: 0 0 0 10px rgba(255,214,0,0.3), 0 0 0 20px rgba(255,214,0,0.15);
+    animation: pulse 3s ease-in-out infinite;
+    z-index: 0;
+  }
+  .sun::before {
+    content: '☀️';
+    font-size: 50px;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+  }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 10px rgba(255,214,0,0.3),0 0 0 20px rgba(255,214,0,0.15)} 50%{box-shadow:0 0 0 16px rgba(255,214,0,0.3),0 0 0 32px rgba(255,214,0,0.1)} }
+
+  /* === TREES === */
+  .trees {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .tree {
+    display: inline-block;
+    position: absolute;
+    bottom: 20px;
+    font-size: 50px;
+    animation: sway 3s ease-in-out infinite;
+    transform-origin: bottom center;
+  }
+  @keyframes sway { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+
+  /* === MAIN CONTAINER === */
+  #app {
+    position: relative;
+    z-index: 10;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .screen { display: none; width: 100%; animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  .screen.active { display: flex; flex-direction: column; align-items: center; }
+  @keyframes popIn { from{transform:scale(0.8) translateY(20px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
+
+  /* === CARDS === */
+  .card {
+    background: white;
+    border-radius: 28px;
+    padding: 28px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.1);
+    width: 100%;
+    border: 4px solid transparent;
+  }
+
+  /* === TITLE SCREEN === */
+  #home .title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3.2em;
+    color: var(--dark);
+    text-shadow: 3px 3px 0 var(--sun), 5px 5px 0 rgba(0,0,0,0.1);
+    text-align: center;
+    line-height: 1.1;
+    animation: bounce 1s ease-in-out infinite alternate;
+  }
+  @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-8px)} }
+
+  #home .subtitle {
+    font-size: 1.3em;
+    color: var(--dark);
+    text-align: center;
+    margin: 12px 0 24px;
+    font-weight: 700;
+  }
+
+  .mascot {
+    font-size: 100px;
+    animation: mascotBounce 0.8s ease-in-out infinite alternate;
+    display: block;
+    text-align: center;
+    margin: 10px 0;
+    filter: drop-shadow(4px 4px 8px rgba(0,0,0,0.2));
+  }
+  @keyframes mascotBounce { from{transform:translateY(0) rotate(-5deg)} to{transform:translateY(-15px) rotate(5deg)} }
+
+  .unit-badges {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 16px 0 24px;
+  }
+  .badge {
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2em;
+    color: white;
+    animation: badgePop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .badge:nth-child(1) { background: var(--coral); animation-delay: 0.1s; }
+  .badge:nth-child(2) { background: var(--mint); animation-delay: 0.2s; color: var(--dark); }
+  .badge:nth-child(3) { background: var(--purple); animation-delay: 0.3s; }
+  .badge:nth-child(4) { background: var(--orange); animation-delay: 0.4s; }
+  @keyframes badgePop { from{transform:scale(0)} to{transform:scale(1)} }
+
+  /* === BUTTONS === */
+  .btn {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3em;
+    padding: 14px 36px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+    letter-spacing: 0.5px;
+    position: relative;
+    top: 0;
+  }
+  .btn:active { top: 4px; box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+  .btn-primary { background: linear-gradient(135deg, #FF6B6B, #FF8E53); color: white; }
+  .btn-primary:hover { background: linear-gradient(135deg, #FF5252, #FF7043); transform: scale(1.05); }
+  .btn-green { background: linear-gradient(135deg, #66BB6A, #43A047); color: white; }
+  .btn-green:hover { transform: scale(1.05); }
+  .btn-blue { background: linear-gradient(135deg, #42A5F5, #1976D2); color: white; }
+  .btn-blue:hover { transform: scale(1.05); }
+  .btn-purple { background: linear-gradient(135deg, #AB47BC, #7B1FA2); color: white; }
+  .btn-purple:hover { transform: scale(1.05); }
+  .btn-orange { background: linear-gradient(135deg, #FFA726, #F57C00); color: white; }
+  .btn-orange:hover { transform: scale(1.05); }
+  .btn-small { font-size: 1em; padding: 10px 22px; }
+  .btn-back { background: #E0E0E0; color: #555; }
+  .btn-back:hover { background: #BDBDBD; }
+
+  /* === NAV MENU === */
+  .nav-menu {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .nav-item {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    cursor: pointer;
+    text-align: center;
+    border: 3px solid transparent;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  }
+  .nav-item:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+  .nav-item .icon { font-size: 40px; display: block; margin-bottom: 8px; }
+  .nav-item .label { font-family: 'Fredoka One', cursive; font-size: 1.2em; }
+  .nav-item .desc { font-size: 0.8em; color: #666; margin-top: 4px; }
+  .nav-learn { border-color: var(--mint); }
+  .nav-learn .label { color: #00897B; }
+  .nav-game1 { border-color: var(--coral); }
+  .nav-game1 .label { color: #E53935; }
+  .nav-game2 { border-color: var(--purple); }
+  .nav-game2 .label { color: #7B1FA2; }
+  .nav-quiz { border-color: var(--orange); }
+  .nav-quiz .label { color: #E65100; }
+
+  /* === LEARN SCREEN === */
+  .unit-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .unit-tab {
+    padding: 10px 22px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1em;
+    border: 3px solid;
+    transition: all 0.2s;
+    background: white;
+  }
+  .unit-tab.mm { border-color: var(--coral); color: var(--coral); }
+  .unit-tab.mm.active { background: var(--coral); color: white; }
+  .unit-tab.cm { border-color: var(--mint); color: #00897B; }
+  .unit-tab.cm.active { background: var(--mint); color: white; }
+  .unit-tab.m { border-color: var(--purple); color: var(--purple); }
+  .unit-tab.m.active { background: var(--purple); color: white; }
+  .unit-tab.km { border-color: var(--orange); color: var(--orange); }
+  .unit-tab.km.active { background: var(--orange); color: white; }
+
+  .learn-panel { display: none; }
+  .learn-panel.active { display: block; animation: popIn 0.3s ease; }
+
+  .unit-header {
+    text-align: center;
+    padding: 16px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+  }
+  .unit-header h2 { font-family: 'Fredoka One', cursive; font-size: 2em; }
+  .unit-header p { font-size: 1em; margin-top: 6px; font-weight: 700; }
+
+  .visual-ruler {
+    position: relative;
+    height: 60px;
+    background: #FFF9C4;
+    border: 3px solid #F9A825;
+    border-radius: 8px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+  .ruler-marks {
+    display: flex;
+    height: 100%;
+    align-items: flex-end;
+    padding: 0 4px;
+    gap: 0;
+  }
+  .tick { background: #F9A825; display: inline-block; flex-shrink: 0; }
+  .tick-sm { height: 12px; width: 2px; }
+  .tick-md { height: 22px; width: 3px; }
+  .tick-lg { height: 35px; width: 4px; }
+
+  .example-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .example-item {
+    background: #F8F9FA;
+    border-radius: 14px;
+    padding: 14px 10px;
+    text-align: center;
+    border: 2px solid #E0E0E0;
+    transition: transform 0.2s;
+  }
+  .example-item:hover { transform: scale(1.05); }
+  .example-item .emoji { font-size: 36px; display: block; }
+  .example-item .name { font-weight: 700; font-size: 0.85em; margin-top: 4px; color: #333; }
+  .example-item .size { font-size: 0.75em; color: #888; }
+
+  .fact-box {
+    border-radius: 16px;
+    padding: 16px;
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+  }
+  .fact-box .fact-icon { font-size: 32px; flex-shrink: 0; }
+  .fact-box .fact-text { font-size: 1em; }
+  .fact-box .big { font-size: 1.4em; font-family: 'Fredoka One', cursive; }
+
+  .conversion-viz {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 14px 0;
+    flex-wrap: wrap;
+  }
+  .conv-box {
+    border-radius: 12px;
+    padding: 12px 20px;
+    text-align: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1em;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+  .conv-arrow { font-size: 1.8em; animation: arrowBounce 0.6s ease-in-out infinite alternate; }
+  @keyframes arrowBounce { from{transform:translateX(-3px)} to{transform:translateX(3px)} }
+
+  /* progress bar */
+  .xp-bar-wrap { width:100%; background:#E0E0E0; border-radius:50px; height:18px; margin:8px 0; overflow:hidden; }
+  .xp-bar { height:100%; background:linear-gradient(90deg,#FFD600,#FF9800); border-radius:50px; transition:width 0.5s ease; }
+
+  /* === GAME SCREEN: MATCH IT === */
+  .game-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2em;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .game-instruction {
+    text-align: center;
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  .score-display {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .score-pill {
+    padding: 8px 20px;
+    border-radius: 50px;
+    background: var(--dark);
+    color: var(--sun);
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1em;
+  }
+
+  .match-items {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .match-card {
+    background: white;
+    border: 3px solid #E0E0E0;
+    border-radius: 16px;
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .match-card:hover { border-color: var(--mint); transform: scale(1.04); }
+  .match-card.selected { border-color: var(--sky); background: #E3F2FD; transform: scale(1.06); }
+  .match-card.correct { border-color: var(--grass); background: #E8F5E9; animation: correctFlash 0.4s ease; }
+  .match-card.wrong { border-color: var(--coral); background: #FFEBEE; animation: shake 0.4s ease; }
+  .match-card .card-icon { font-size: 32px; }
+  .match-card .card-label { font-weight: 700; font-size: 0.9em; margin-top: 4px; }
+  @keyframes correctFlash { 0%,100%{transform:scale(1.06)} 50%{transform:scale(1.18)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%,75%{transform:translateX(-6px)} 50%{transform:translateX(6px)} }
+
+  .unit-targets {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .unit-target {
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3em;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  .unit-target:hover { transform: scale(1.08); }
+  .unit-target.u-mm { background: #FFEBEE; color: var(--coral); border-color: var(--coral); }
+  .unit-target.u-cm { background: #E0F2F1; color: #00897B; border-color: var(--mint); }
+  .unit-target.u-m  { background: #F3E5F5; color: var(--purple); border-color: var(--purple); }
+  .unit-target.u-km { background: #FFF3E0; color: var(--orange); border-color: var(--orange); }
+  .unit-target.glow { animation: glow 0.3s ease; }
+  @keyframes glow { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.3)} }
+
+  /* === GAME 2: RULER READING === */
+  .ruler-game-wrap {
+    background: #FFFDE7;
+    border: 4px solid #F9A825;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .ruler-svg-wrap { width: 100%; overflow-x: auto; }
+  .question-bubble {
+    background: #E3F2FD;
+    border-radius: 16px;
+    padding: 16px;
+    font-size: 1.1em;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 14px;
+    border: 2px solid var(--sky);
+  }
+  .answer-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .answer-btn {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2em;
+    padding: 12px 26px;
+    border-radius: 50px;
+    border: 3px solid #E0E0E0;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 3px 0 #E0E0E0;
+  }
+  .answer-btn:hover { transform: scale(1.05); border-color: var(--sky); }
+  .answer-btn.correct-ans { border-color: var(--grass); background: #E8F5E9; color: #2E7D32; animation: correctFlash 0.4s; }
+  .answer-btn.wrong-ans { border-color: var(--coral); background: #FFEBEE; color: #C62828; animation: shake 0.4s; }
+
+  /* === QUIZ SCREEN === */
+  .quiz-q {
+    background: linear-gradient(135deg, #E3F2FD, #F3E5F5);
+    border-radius: 18px;
+    padding: 20px;
+    font-size: 1.15em;
+    font-weight: 700;
+    color: var(--dark);
+    text-align: center;
+    margin-bottom: 16px;
+    border: 2px solid #BBDEFB;
+  }
+  .quiz-q .q-icon { font-size: 2em; display: block; margin-bottom: 8px; }
+  .quiz-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .quiz-opt {
+    padding: 14px;
+    background: white;
+    border: 3px solid #E0E0E0;
+    border-radius: 14px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1em;
+    transition: all 0.2s;
+    box-shadow: 0 3px 0 #E0E0E0;
+  }
+  .quiz-opt:hover { border-color: var(--sky); background: #E3F2FD; transform: translateY(-2px); }
+  .quiz-opt.correct { border-color: var(--grass); background: #E8F5E9; color: #1B5E20; }
+  .quiz-opt.wrong { border-color: var(--coral); background: #FFEBEE; color: #B71C1C; }
+
+  .quiz-progress {
+    width: 100%;
+    background: #E0E0E0;
+    border-radius: 50px;
+    height: 14px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .quiz-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4FC3F7, #9C27B0);
+    border-radius: 50px;
+    transition: width 0.4s ease;
+  }
+
+  /* === FEEDBACK / CELEBRATION === */
+  .feedback-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .feedback-overlay.show { opacity: 1; }
+  .feedback-msg {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3em;
+    color: white;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+    animation: feedbackPop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes feedbackPop { from{transform:scale(0)} to{transform:scale(1)} }
+
+  .confetti-piece {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    animation: confettiFall linear forwards;
+    z-index: 200;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  .stars-result {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 10px 0;
+    font-size: 2.5em;
+  }
+  .star { display: inline-block; animation: starSpin 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+  .star:nth-child(1) { animation-delay: 0.1s; }
+  .star:nth-child(2) { animation-delay: 0.3s; }
+  .star:nth-child(3) { animation-delay: 0.5s; }
+  @keyframes starSpin { from{transform:scale(0) rotate(-180deg)} to{transform:scale(1) rotate(0deg)} }
+
+  /* === TIPS BOX === */
+  .tip-box {
+    background: linear-gradient(135deg, #FFF9C4, #FFF59D);
+    border: 2px dashed #F9A825;
+    border-radius: 14px;
+    padding: 12px 16px;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #5D4037;
+    margin-top: 12px;
+  }
+  .tip-box .tip-head { font-family: 'Fredoka One', cursive; color: #E65100; font-size: 1.1em; }
+
+  /* responsive */
+  @media (max-width: 500px) {
+    #home .title { font-size: 2.2em; }
+    .mascot { font-size: 70px; }
+    .example-grid { grid-template-columns: repeat(2,1fr); }
+    .quiz-options { grid-template-columns: 1fr; }
+  }
+
+  .header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  .page-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.6em;
+    color: var(--dark);
+  }
+
+  .lives {
+    display: flex;
+    gap: 4px;
+    font-size: 1.4em;
+  }
+
+  .done-card {
+    text-align: center;
+    padding: 30px;
+  }
+  .done-card h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.2em;
+    color: var(--dark);
+    margin-bottom: 10px;
+  }
+  .done-score {
+    font-size: 3em;
+    font-family: 'Fredoka One', cursive;
+    color: var(--coral);
+    margin: 10px 0;
+  }
+
+  .animate-in {
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  .worm-ruler {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 10px 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  .worm-seg {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid white;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
+    transition: all 0.3s;
+  }
+  .worm-head {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  .animated-bar {
+    height: 26px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    color: white;
+    font-weight: 800;
+    font-size: 0.85em;
+    margin: 4px 0;
+    animation: growBar 1s ease-out forwards;
+    transform-origin: left;
+  }
+  @keyframes growBar { from{width:20px!important;opacity:0} to{opacity:1} }
+</style>
+</head>
+<body>
+
+<!-- Decorative background -->
+<div class="sun"></div>
+<div class="cloud cloud1"></div>
+<div class="cloud cloud2"></div>
+<div class="cloud cloud3"></div>
+<div class="trees">
+  <span class="tree" style="left:3%;font-size:55px;animation-delay:0s">🌳</span>
+  <span class="tree" style="left:10%;font-size:40px;animation-delay:0.5s">🌲</span>
+  <span class="tree" style="right:5%;font-size:60px;animation-delay:1s">🌳</span>
+  <span class="tree" style="right:14%;font-size:45px;animation-delay:0.3s">🌲</span>
+  <span class="tree" style="left:45%;font-size:35px;animation-delay:1.2s">🌿</span>
+</div>
+
+<div id="app">
+
+  <!-- ====== HOME ====== -->
+  <div id="home" class="screen active">
+    <div class="card" style="background:linear-gradient(160deg,#FFFDE7,#E1F5FE); border-color: #FFD600;">
+      <div class="title">📏 Measurement<br>Adventure!</div>
+      <div class="subtitle">Explore the world of measuring! 🌍</div>
+      <span class="mascot">🐛</span>
+      <div style="text-align:center;font-size:0.9em;color:#666;font-weight:600;margin-bottom:16px">
+        Hi! I'm <strong>Milo the Measuring Worm!</strong><br>Let's learn mm, cm, m &amp; km together!
+      </div>
+      <div class="unit-badges">
+        <span class="badge">mm</span>
+        <span class="badge">cm</span>
+        <span class="badge">m</span>
+        <span class="badge">km</span>
+      </div>
+      <div class="nav-menu">
+        <div class="nav-item nav-learn" onclick="showScreen('learn')">
+          <span class="icon">📚</span>
+          <div class="label">Learn It</div>
+          <div class="desc">Discover each unit</div>
+        </div>
+        <div class="nav-item nav-game1" onclick="startMatchGame()">
+          <span class="icon">🎯</span>
+          <div class="label">Match It!</div>
+          <div class="desc">Sort objects to units</div>
+        </div>
+        <div class="nav-item nav-game2" onclick="startRulerGame()">
+          <span class="icon">📐</span>
+          <div class="label">Read the Ruler</div>
+          <div class="desc">Measure with a ruler</div>
+        </div>
+        <div class="nav-item nav-quiz" onclick="startQuiz()">
+          <span class="icon">⭐</span>
+          <div class="label">Star Quiz!</div>
+          <div class="desc">Test your knowledge</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== LEARN SCREEN ====== -->
+  <div id="learn" class="screen">
+    <div class="card">
+      <div class="header-bar">
+        <button class="btn btn-back btn-small" onclick="showScreen('home')">← Back</button>
+        <div class="page-title">📚 Learn It!</div>
+        <span>🐛</span>
+      </div>
+      <div class="unit-tabs">
+        <button class="unit-tab mm active" onclick="showUnit('mm')">mm</button>
+        <button class="unit-tab cm" onclick="showUnit('cm')">cm</button>
+        <button class="unit-tab m" onclick="showUnit('m')">m</button>
+        <button class="unit-tab km" onclick="showUnit('km')">km</button>
+      </div>
+
+      <!-- MM PANEL -->
+      <div class="learn-panel active" id="panel-mm">
+        <div class="unit-header" style="background:#FFEBEE;">
+          <h2 style="color:#E53935;">📌 Millimetre (mm)</h2>
+          <p style="color:#E53935;">The TINIEST unit we use! Teeny tiny!</p>
+        </div>
+        <div class="tip-box">
+          <div class="tip-head">🐛 Milo says:</div>
+          <div>A millimetre is about the thickness of a <strong>fingernail</strong>! Can you see it on your ruler? Count the tiny lines between each centimetre — there are <strong>10 mm in 1 cm!</strong></div>
+        </div>
+        <div class="worm-ruler" id="mmRuler"></div>
+        <div class="example-grid">
+          <div class="example-item"><span class="emoji">💊</span><div class="name">A tablet</div><div class="size">~5 mm thick</div></div>
+          <div class="example-item"><span class="emoji">🪙</span><div class="name">A 1p coin</div><div class="size">~2 mm thick</div></div>
+          <div class="example-item"><span class="emoji">✏️</span><div class="name">Pencil lead</div><div class="size">~2 mm wide</div></div>
+          <div class="example-item"><span class="emoji">🐜</span><div class="name">An ant</div><div class="size">~1-2 mm long</div></div>
+          <div class="example-item"><span class="emoji">💧</span><div class="name">Raindrop</div><div class="size">~1-3 mm wide</div></div>
+          <div class="example-item"><span class="emoji">🍃</span><div class="name">Leaf vein</div><div class="size">~1 mm wide</div></div>
+        </div>
+        <div class="fact-box" style="background:#FFEBEE;">
+          <div class="fact-icon">🔢</div>
+          <div class="fact-text"><span class="big">10 mm = 1 cm</span><br>Ten little millimetres make one centimetre!</div>
+        </div>
+      </div>
+
+      <!-- CM PANEL -->
+      <div class="learn-panel" id="panel-cm">
+        <div class="unit-header" style="background:#E0F2F1;">
+          <h2 style="color:#00897B;">📏 Centimetre (cm)</h2>
+          <p style="color:#00897B;">Small but handy — perfect for everyday measuring!</p>
+        </div>
+        <div class="tip-box">
+          <div class="tip-head">🐛 Milo says:</div>
+          <div>Spread your fingers — from your <strong>thumb tip to little finger</strong> is about <strong>15-18 cm</strong>! We use centimetres to measure things we can hold.</div>
+        </div>
+        <div style="margin:14px 0;">
+          <div style="font-weight:700;margin-bottom:6px;color:#555;">How big is 1 cm?</div>
+          <div style="background:#FFF9C4;border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.8em;">👆</span>
+            <span style="font-weight:700;">About the width of your fingernail!</span>
+          </div>
+        </div>
+        <div class="example-grid">
+          <div class="example-item"><span class="emoji">📎</span><div class="name">Paperclip</div><div class="size">~3 cm long</div></div>
+          <div class="example-item"><span class="emoji">🖊️</span><div class="name">Pencil</div><div class="size">~17 cm long</div></div>
+          <div class="example-item"><span class="emoji">📱</span><div class="name">Phone</div><div class="size">~15 cm tall</div></div>
+          <div class="example-item"><span class="emoji">✂️</span><div class="name">Scissors</div><div class="size">~14 cm long</div></div>
+          <div class="example-item"><span class="emoji">🖐️</span><div class="name">Your hand</div><div class="size">~12–15 cm</div></div>
+          <div class="example-item"><span class="emoji">🍌</span><div class="name">Banana</div><div class="size">~20 cm long</div></div>
+        </div>
+        <div class="fact-box" style="background:#E0F2F1;">
+          <div class="fact-icon">🔢</div>
+          <div class="fact-text"><span class="big">100 cm = 1 m</span><br>One hundred centimetres fill up a whole metre!</div>
+        </div>
+      </div>
+
+      <!-- M PANEL -->
+      <div class="learn-panel" id="panel-m">
+        <div class="unit-header" style="background:#F3E5F5;">
+          <h2 style="color:#7B1FA2;">🚪 Metre (m)</h2>
+          <p style="color:#7B1FA2;">For bigger things — doors, rooms & swimming pools!</p>
+        </div>
+        <div class="tip-box">
+          <div class="tip-head">🐛 Milo says:</div>
+          <div>Stand up and stretch your arms wide — that's about <strong>1 metre!</strong> Most adult people are between <strong>1.5 m and 2 m</strong> tall!</div>
+        </div>
+        <div style="margin:14px 0;display:flex;align-items:flex-end;justify-content:center;gap:20px;flex-wrap:wrap;">
+          <div style="text-align:center;">
+            <div style="font-size:60px;line-height:1;">🧒</div>
+            <div style="font-weight:700;color:#7B1FA2;">Year 3 child<br>~1.3 m</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:78px;line-height:1;">🧑</div>
+            <div style="font-weight:700;color:#7B1FA2;">Adult<br>~1.7 m</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:90px;line-height:1;">🦒</div>
+            <div style="font-weight:700;color:#7B1FA2;">Giraffe<br>~5 m</div>
+          </div>
+        </div>
+        <div class="example-grid">
+          <div class="example-item"><span class="emoji">🚪</span><div class="name">Doorway</div><div class="size">~2 m tall</div></div>
+          <div class="example-item"><span class="emoji">🛏️</span><div class="name">Single bed</div><div class="size">~2 m long</div></div>
+          <div class="example-item"><span class="emoji">🏊</span><div class="name">Pool length</div><div class="size">25-50 m</div></div>
+          <div class="example-item"><span class="emoji">⚽</span><div class="name">Football pitch</div><div class="size">~100 m long</div></div>
+          <div class="example-item"><span class="emoji">🌳</span><div class="name">Oak tree</div><div class="size">~20 m tall</div></div>
+          <div class="example-item"><span class="emoji">🏫</span><div class="name">Classroom</div><div class="size">~8 m wide</div></div>
+        </div>
+        <div class="fact-box" style="background:#F3E5F5;">
+          <div class="fact-icon">🔢</div>
+          <div class="fact-text"><span class="big">1000 m = 1 km</span><br>One thousand metres = one whole kilometre!</div>
+        </div>
+      </div>
+
+      <!-- KM PANEL -->
+      <div class="learn-panel" id="panel-km">
+        <div class="unit-header" style="background:#FFF3E0;">
+          <h2 style="color:#E65100;">🚗 Kilometre (km)</h2>
+          <p style="color:#E65100;">HUGE distances — roads, cities &amp; journeys!</p>
+        </div>
+        <div class="tip-box">
+          <div class="tip-head">🐛 Milo says:</div>
+          <div>If you walked around a <strong>running track 2.5 times</strong>, that's about 1 kilometre! We use km to measure how far places are from each other.</div>
+        </div>
+        <div style="margin:14px 0;background:#FFF3E0;border-radius:12px;padding:14px;">
+          <div style="font-weight:800;color:#E65100;margin-bottom:8px;">📍 Journey Distances:</div>
+          <div class="animated-bar" style="background:#FF9800;width:30%">~0.3 km — Walk to school</div>
+          <div class="animated-bar" style="background:#FB8C00;width:55%">~5 km — Town to town</div>
+          <div class="animated-bar" style="background:#F57C00;width:80%">~10 km — Run a race!</div>
+          <div class="animated-bar" style="background:#EF6C00;width:95%">~400 km — London → Edinburgh</div>
+        </div>
+        <div class="example-grid">
+          <div class="example-item"><span class="emoji">🏃</span><div class="name">1km run</div><div class="size">~6 min walk</div></div>
+          <div class="example-item"><span class="emoji">🚗</span><div class="name">Motorway</div><div class="size">km markers</div></div>
+          <div class="example-item"><span class="emoji">✈️</span><div class="name">UK to France</div><div class="size">~500 km</div></div>
+          <div class="example-item"><span class="emoji">🌍</span><div class="name">Earth's edge</div><div class="size">40,000 km!</div></div>
+          <div class="example-item"><span class="emoji">🗺️</span><div class="name">Maps</div><div class="size">in km scale</div></div>
+          <div class="example-item"><span class="emoji">🚴</span><div class="name">Bike ride</div><div class="size">10-20 km</div></div>
+        </div>
+        <div class="fact-box" style="background:#FFF3E0;">
+          <div class="fact-icon">🔢</div>
+          <div class="fact-text"><span class="big">1 km = 1000 m</span><br>A thousand metres all lined up = one kilometre!</div>
+        </div>
+      </div>
+
+      <!-- Conversion summary -->
+      <div style="margin-top:18px;padding:16px;background:linear-gradient(135deg,#E3F2FD,#FCE4EC);border-radius:16px;">
+        <div style="font-family:'Fredoka One',cursive;font-size:1.2em;text-align:center;color:var(--dark);margin-bottom:10px;">🧠 The Conversion Ladder</div>
+        <div class="conversion-viz">
+          <div class="conv-box" style="background:#E53935;">10 mm<br><small>= 1 cm</small></div>
+          <div class="conv-arrow">➡️</div>
+          <div class="conv-box" style="background:#00897B;">100 cm<br><small>= 1 m</small></div>
+          <div class="conv-arrow">➡️</div>
+          <div class="conv-box" style="background:#7B1FA2;">1000 m<br><small>= 1 km</small></div>
+        </div>
+        <div style="text-align:center;font-size:0.85em;color:#555;font-weight:700;">mm → cm → m → km: each one is BIGGER!</div>
+      </div>
+
+      <div style="margin-top:16px;text-align:center">
+        <button class="btn btn-primary" onclick="startMatchGame()">Play Match It! 🎯</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== MATCH GAME ====== -->
+  <div id="match-game" class="screen">
+    <div class="card">
+      <div class="header-bar">
+        <button class="btn btn-back btn-small" onclick="showScreen('home')">← Back</button>
+        <div class="page-title">🎯 Match It!</div>
+        <div class="lives" id="match-lives">❤️❤️❤️</div>
+      </div>
+      <div class="score-display">
+        <div class="score-pill">⭐ Score: <span id="match-score">0</span></div>
+        <div class="score-pill">🔥 Level: <span id="match-level">1</span></div>
+      </div>
+      <div class="question-bubble" id="match-question">Tap the correct unit for this object!</div>
+      <div class="match-items" id="match-items"></div>
+      <div class="unit-targets">
+        <div class="unit-target u-mm" onclick="checkMatch('mm')">mm</div>
+        <div class="unit-target u-cm" onclick="checkMatch('cm')">cm</div>
+        <div class="unit-target u-m" onclick="checkMatch('m')">m</div>
+        <div class="unit-target u-km" onclick="checkMatch('km')">km</div>
+      </div>
+      <div class="xp-bar-wrap" style="margin-top:14px"><div class="xp-bar" id="match-xp" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- ====== RULER GAME ====== -->
+  <div id="ruler-game" class="screen">
+    <div class="card">
+      <div class="header-bar">
+        <button class="btn btn-back btn-small" onclick="showScreen('home')">← Back</button>
+        <div class="page-title">📐 Read the Ruler</div>
+        <div class="score-pill" style="font-family:'Fredoka One',cursive;padding:6px 14px;background:var(--dark);color:var(--sun);border-radius:50px">⭐ <span id="ruler-score">0</span></div>
+      </div>
+      <div class="quiz-progress"><div class="quiz-progress-fill" id="ruler-prog" style="width:0%"></div></div>
+      <div class="question-bubble" id="ruler-question"></div>
+      <div class="ruler-game-wrap">
+        <div class="ruler-svg-wrap">
+          <svg id="ruler-svg" width="500" height="80" viewBox="0 0 500 80"></svg>
+        </div>
+      </div>
+      <div class="answer-options" id="ruler-options"></div>
+    </div>
+  </div>
+
+  <!-- ====== QUIZ ====== -->
+  <div id="quiz" class="screen">
+    <div class="card">
+      <div class="header-bar">
+        <button class="btn btn-back btn-small" onclick="showScreen('home')">← Back</button>
+        <div class="page-title">⭐ Star Quiz!</div>
+        <span>🐛</span>
+      </div>
+      <div class="quiz-progress"><div class="quiz-progress-fill" id="quiz-prog" style="width:0%"></div></div>
+      <div style="text-align:right;font-size:0.9em;color:#888;font-weight:600;margin-bottom:8px">
+        Question <span id="quiz-qnum">1</span> of <span id="quiz-total">10</span>
+      </div>
+      <div class="quiz-q" id="quiz-question"></div>
+      <div class="quiz-options" id="quiz-options"></div>
+      <div class="tip-box" id="quiz-feedback" style="display:none;margin-top:12px"></div>
+    </div>
+  </div>
+
+  <!-- ====== RESULTS ====== -->
+  <div id="results" class="screen">
+    <div class="card done-card">
+      <div class="mascot" id="result-mascot">🐛</div>
+      <h2 id="result-title">Amazing!</h2>
+      <div class="done-score" id="result-score"></div>
+      <div class="stars-result" id="result-stars"></div>
+      <p id="result-msg" style="color:#555;font-weight:700;margin:12px 0 20px"></p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+        <button class="btn btn-green" onclick="showScreen('home')">🏠 Home</button>
+        <button class="btn btn-primary" id="retry-btn">🔄 Play Again</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Feedback overlay -->
+<div class="feedback-overlay" id="feedback-overlay">
+  <div class="feedback-msg" id="feedback-msg"></div>
+</div>
+
+<script>
+// ===================== DATA =====================
+const matchObjects = [
+  { emoji:'🐜', label:'Ant', unit:'mm', desc:'An ant is about 1–2 mm long', hint:'Tiny! mm is for super small things' },
+  { emoji:'💊', label:'Tablet pill', unit:'mm', desc:'A tablet is about 5 mm thick', hint:'mm is great for tiny objects' },
+  { emoji:'🪙', label:'1p coin', unit:'mm', desc:'A coin is about 2 mm thick', hint:'Too small for cm, perfect for mm' },
+  { emoji:'📎', label:'Paperclip', unit:'cm', desc:'A paperclip is about 3 cm long', hint:'Small enough for cm!' },
+  { emoji:'🖊️', label:'Pencil', unit:'cm', desc:'A pencil is about 17 cm long', hint:'You can measure this with a ruler in cm' },
+  { emoji:'🍌', label:'Banana', unit:'cm', desc:'A banana is about 20 cm long', hint:'Fruit-sized = centimetres!' },
+  { emoji:'📱', label:'Phone', unit:'cm', desc:'A phone is about 15 cm tall', hint:'Hand-sized objects = cm' },
+  { emoji:'🖐️', label:'Your hand', unit:'cm', desc:'A hand span is about 12–15 cm', hint:'Body parts like hands = cm' },
+  { emoji:'🚪', label:'Doorway', unit:'m', desc:'A doorway is about 2 m tall', hint:'Taller than you = metres!' },
+  { emoji:'🛏️', label:'Single bed', unit:'m', desc:'A bed is about 2 m long', hint:'Room-sized things = metres' },
+  { emoji:'🏊', label:'Swimming pool', unit:'m', desc:'A pool is 25 m long', hint:'Big spaces = metres' },
+  { emoji:'🦒', label:'Giraffe', unit:'m', desc:'A giraffe is about 5 m tall', hint:'Huge animals = metres!' },
+  { emoji:'🏫', label:'School building', unit:'m', desc:'A school is about 10 m wide', hint:'Buildings = metres' },
+  { emoji:'🚗', label:'Car journey', unit:'km', desc:'A short trip might be 5 km', hint:'Distances on roads = km' },
+  { emoji:'✈️', label:'Flight to France', unit:'km', desc:'London to Paris is about 340 km', hint:'Country-to-country = km' },
+  { emoji:'🗺️', label:'City to city', unit:'km', desc:'London to Manchester is 320 km', hint:'Map distances = kilometres' },
+  { emoji:'🏃', label:'Marathon', unit:'km', desc:'A marathon is 42 km', hint:'Long races = km' },
+  { emoji:'🌍', label:'Earth diameter', unit:'km', desc:'Earth is 12,742 km wide', hint:'Planetary distances = km!' },
+];
+
+const quizQuestions = [
+  { q:'Which unit would you use to measure the length of a pencil?', icon:'✏️', options:['mm','cm','m','km'], answer:'cm', explain:'A pencil is about 17 cm — centimetres are perfect for hand-sized things!' },
+  { q:'How many mm are in 1 cm?', icon:'🔢', options:['5','10','100','1000'], answer:'10', explain:'There are 10 millimetres in 1 centimetre. Count the tiny lines on a ruler!' },
+  { q:'How many cm are in 1 metre?', icon:'📏', options:['10','50','100','1000'], answer:'100', explain:'100 centimetres = 1 metre! One hundred cm fill a whole metre!' },
+  { q:'Which unit is best for measuring the distance from London to Scotland?', icon:'🗺️', options:['mm','cm','m','km'], answer:'km', explain:'Big distances between cities are measured in kilometres (km)!' },
+  { q:'A door is 2 ___ tall. Which unit fits?', icon:'🚪', options:['mm','cm','m','km'], answer:'m', explain:'Doors are about 2 metres tall — bigger than you! Metres are for large objects.' },
+  { q:'Which is the SMALLEST unit?', icon:'🐜', options:['mm','cm','m','km'], answer:'mm', explain:'mm (millimetre) is the tiniest! mm < cm < m < km' },
+  { q:'How many metres are in 1 km?', icon:'🚗', options:['10','100','500','1000'], answer:'1000', explain:'1 kilometre = 1000 metres! That\'s a thousand metres all in a line!' },
+  { q:'An ant is about 2 ___ long. Which unit?', icon:'🐜', options:['mm','cm','m','km'], answer:'mm', explain:'Tiny things like ants are measured in millimetres (mm)!' },
+  { q:'Which unit would you use to measure YOUR height?', icon:'🧒', options:['mm','cm','m','km'], answer:'m', explain:'Children are between 1.1 m and 1.4 m tall — we use metres or cm for heights!' },
+  { q:'A swimming pool is 25 ___ long.', icon:'🏊', options:['mm','cm','m','km'], answer:'m', explain:'A swimming pool is 25 metres long — big spaces use metres!' },
+  { q:'Which is BIGGER: 50 cm or 1 m?', icon:'🤔', options:['50 cm','1 m','They\'re equal','Can\'t tell'], answer:'1 m', explain:'1 m = 100 cm, so 1 m is bigger than 50 cm!' },
+  { q:'You walk to school — about 0.5 ___. Which unit?', icon:'🏃', options:['mm','cm','m','km'], answer:'km', explain:'Walking distances to school are measured in kilometres (about 0.5 km = 500 m)!' },
+];
+
+// ===================== STATE =====================
+let matchScore = 0, matchLevel = 1, matchLives = 3;
+let matchCurrentItem = null, matchUsed = [];
+let rulerScore = 0, rulerQ = 0;
+let quizScore = 0, quizQ = 0, quizAnswered = false;
+let currentGame = '';
+
+// ===================== SCREEN NAV =====================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  // scroll to top
+  window.scrollTo(0,0);
+}
+
+// ===================== LEARN =====================
+function showUnit(unit) {
+  document.querySelectorAll('.unit-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.unit-tab.'+unit).classList.add('active');
+  document.querySelectorAll('.learn-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-'+unit).classList.add('active');
+  if(unit==='mm') buildMMRuler();
+}
+
+function buildMMRuler() {
+  const wrap = document.getElementById('mmRuler');
+  if(wrap.children.length > 0) return;
+  const colors = ['#FF6B6B','#FF9800','#FFD600','#66BB6A','#42A5F5','#9C27B0','#E91E63','#00BCD4','#795548','#607D8B'];
+  let html = '<div class="worm-seg worm-head" style="background:#FF6B6B">🐛</div>';
+  for(let i=0;i<10;i++){
+    html += `<div class="worm-seg" style="background:${colors[i]}">${i+1}</div>`;
+  }
+  wrap.innerHTML = html + '<div style="margin-left:6px;font-weight:700;color:#E53935;">= 1 cm!</div>';
+}
+
+// ===================== MATCH GAME =====================
+function startMatchGame() {
+  matchScore = 0; matchLevel = 1; matchLives = 3; matchUsed = [];
+  document.getElementById('match-score').textContent = 0;
+  document.getElementById('match-level').textContent = 1;
+  updateLives('match-lives', matchLives);
+  showScreen('match-game');
+  nextMatchRound();
+}
+
+function nextMatchRound() {
+  const available = matchObjects.filter((_,i) => !matchUsed.includes(i));
+  if(available.length === 0){ matchUsed = []; }
+  const avail2 = matchObjects.filter((_,i) => !matchUsed.includes(i));
+
+  // pick 3 items: 1 to show as question, show all 3 as cards
+  const shuffled = shuffle([...Array(avail2.length).keys()]);
+  const pickedIdxs = shuffled.slice(0, Math.min(3, avail2.length));
+  const questionIdx = pickedIdxs[0];
+  const realIdx = matchObjects.indexOf(avail2[questionIdx]);
+  matchCurrentItem = avail2[questionIdx];
+  matchUsed.push(realIdx);
+
+  const q = document.getElementById('match-question');
+  q.innerHTML = `🐛 <strong>${matchCurrentItem.emoji} ${matchCurrentItem.label}</strong> — which unit fits best?`;
+
+  const container = document.getElementById('match-items');
+  container.innerHTML = '';
+  // show 3 objects including the question one, highlight question one
+  const displayItems = [avail2[questionIdx]];
+  let extras = shuffle(avail2.filter((_,i)=>i!==questionIdx)).slice(0,2);
+  displayItems.push(...extras);
+  shuffle(displayItems).forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'match-card' + (item===matchCurrentItem?' selected':'');
+    div.innerHTML = `<div class="card-icon">${item.emoji}</div><div class="card-label">${item.label}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function checkMatch(unit) {
+  if(!matchCurrentItem) return;
+  const correct = unit === matchCurrentItem.unit;
+  const targets = document.querySelectorAll('.unit-target');
+  targets.forEach(t => {
+    if(t.textContent.trim() === unit) {
+      t.classList.add('glow');
+      setTimeout(()=>t.classList.remove('glow'),400);
+    }
+  });
+
+  if(correct) {
+    matchScore += (10 * matchLevel);
+    document.getElementById('match-score').textContent = matchScore;
+    if(matchScore >= matchLevel * 60){ matchLevel++; document.getElementById('match-level').textContent = matchLevel; }
+    document.getElementById('match-xp').style.width = Math.min(100,(matchScore % 60)/60*100)+'%';
+    showFeedback(true, getPositive());
+    spawnConfetti();
+    setTimeout(nextMatchRound, 1200);
+  } else {
+    matchLives--;
+    updateLives('match-lives', matchLives);
+    showFeedback(false, `Not quite! ${matchCurrentItem.label} uses ${matchCurrentItem.unit.toUpperCase()}`);
+    if(matchLives <= 0) {
+      setTimeout(()=>showResults('match', matchScore, quizQuestions.length), 1500);
+    } else {
+      setTimeout(nextMatchRound, 1800);
+    }
+  }
+}
+
+// ===================== RULER GAME =====================
+const rulerQuestions = [
+  { label:'📎 Paperclip', len:3, unit:'cm', q:'How long is the paperclip?' },
+  { label:'🖊️ Pencil tip', len:8, unit:'cm', q:'How long is the pencil?' },
+  { label:'🐛 Worm', len:5, unit:'cm', q:'How long is Milo the Worm?' },
+  { label:'🍄 Mushroom', len:4, unit:'cm', q:'How tall is the mushroom?' },
+  { label:'🌸 Flower', len:7, unit:'cm', q:'How long is the flower stem?' },
+  { label:'🦎 Lizard', len:6, unit:'cm', q:'How long is the lizard?' },
+  { label:'🔑 Key', len:9, unit:'cm', q:'How long is the key?' },
+  { label:'🪱 Earthworm', len:10, unit:'cm', q:'How long is the earthworm?' },
+];
+
+function startRulerGame() {
+  rulerScore = 0; rulerQ = 0;
+  document.getElementById('ruler-score').textContent = 0;
+  showScreen('ruler-game');
+  nextRulerQ();
+}
+
+function nextRulerQ() {
+  if(rulerQ >= rulerQuestions.length){ showResults('ruler', rulerScore, rulerQuestions.length); return; }
+  const q = rulerQuestions[rulerQ];
+  document.getElementById('ruler-question').innerHTML = `📏 ${q.q} <strong>${q.label}</strong>`;
+  document.getElementById('ruler-prog').style.width = (rulerQ/rulerQuestions.length*100)+'%';
+
+  // Draw ruler SVG
+  drawRulerSVG(q.len);
+
+  // Options
+  const options = shuffle([q.len, q.len+2, q.len-1, q.len+4].filter(v=>v>0).slice(0,4));
+  const wrap = document.getElementById('ruler-options');
+  wrap.innerHTML = '';
+  options.forEach(val => {
+    const btn = document.createElement('button');
+    btn.className = 'answer-btn';
+    btn.textContent = val + ' ' + q.unit;
+    btn.onclick = () => checkRuler(val, q.len, btn);
+    wrap.appendChild(btn);
+  });
+}
+
+function drawRulerSVG(lengthCm) {
+  const svg = document.getElementById('ruler-svg');
+  const scale = 42; // px per cm
+  const totalCm = 12;
+  const W = 500, H = 80;
+  let svgContent = '';
+
+  // Ruler body
+  svgContent += `<rect x="10" y="15" width="${totalCm*scale}" height="55" rx="6" fill="#FFF9C4" stroke="#F9A825" stroke-width="3"/>`;
+
+  // Tick marks
+  for(let i=0; i<=totalCm; i++){
+    const x = 10 + i*scale;
+    svgContent += `<line x1="${x}" y1="15" x2="${x}" y2="55" stroke="#E65100" stroke-width="2.5"/>`;
+    svgContent += `<text x="${x}" y="68" text-anchor="middle" font-size="11" font-weight="bold" fill="#5D4037">${i}</text>`;
+    // half cm
+    if(i<totalCm){
+      const hx = x + scale/2;
+      svgContent += `<line x1="${hx}" y1="15" x2="${hx}" y2="42" stroke="#F9A825" stroke-width="1.5"/>`;
+      // mm ticks
+      for(let j=1;j<10;j++){
+        if(j===5) continue;
+        const mx = x + j*(scale/10);
+        svgContent += `<line x1="${mx}" y1="15" x2="${mx}" y2="32" stroke="#FFD54F" stroke-width="1"/>`;
+      }
+    }
+  }
+
+  // Object bar
+  svgContent += `<rect x="10" y="8" width="${lengthCm*scale}" height="10" rx="3" fill="#FF6B6B" opacity="0.85"/>`;
+  // Arrow
+  svgContent += `<line x1="10" y1="4" x2="${10+lengthCm*scale}" y2="4" stroke="#E53935" stroke-width="2" marker-end="url(#arr)"/>`;
+  svgContent += `<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#E53935"/></marker></defs>`;
+  svgContent += `<text x="${10+lengthCm*scale/2}" y="1" text-anchor="middle" font-size="10" fill="#E53935" font-weight="bold">?</text>`;
+
+  svg.innerHTML = svgContent;
+}
+
+function checkRuler(val, correct, btn) {
+  const allBtns = document.querySelectorAll('.answer-btn');
+  allBtns.forEach(b => b.onclick = null);
+
+  if(val === correct) {
+    btn.classList.add('correct-ans');
+    rulerScore++;
+    document.getElementById('ruler-score').textContent = rulerScore;
+    showFeedback(true, getPositive());
+    spawnConfetti();
+  } else {
+    btn.classList.add('wrong-ans');
+    allBtns.forEach(b => { if(parseInt(b.textContent) === correct) b.classList.add('correct-ans'); });
+    showFeedback(false, `It was ${correct} cm! Count the marks on the ruler 📏`);
+  }
+  rulerQ++;
+  setTimeout(nextRulerQ, 1600);
+}
+
+// ===================== QUIZ =====================
+function startQuiz() {
+  quizScore = 0; quizQ = 0; quizAnswered = false;
+  document.getElementById('quiz-qnum').textContent = 1;
+  document.getElementById('quiz-total').textContent = quizQuestions.length;
+  showScreen('quiz');
+  nextQuizQ();
+}
+
+function nextQuizQ() {
+  if(quizQ >= quizQuestions.length){ showResults('quiz', quizScore, quizQuestions.length); return; }
+  quizAnswered = false;
+  const q = quizQuestions[quizQ];
+  document.getElementById('quiz-prog').style.width = (quizQ/quizQuestions.length*100)+'%';
+  document.getElementById('quiz-qnum').textContent = quizQ+1;
+  document.getElementById('quiz-question').innerHTML = `<span class="q-icon">${q.icon}</span>${q.q}`;
+  document.getElementById('quiz-feedback').style.display = 'none';
+
+  const wrap = document.getElementById('quiz-options');
+  wrap.innerHTML = '';
+  q.options.forEach(opt => {
+    const div = document.createElement('div');
+    div.className = 'quiz-opt animate-in';
+    div.textContent = opt;
+    div.onclick = () => checkQuiz(opt, q.answer, div, q.explain);
+    wrap.appendChild(div);
+  });
+}
+
+function checkQuiz(chosen, correct, el, explain) {
+  if(quizAnswered) return;
+  quizAnswered = true;
+  document.querySelectorAll('.quiz-opt').forEach(o => o.onclick = null);
+
+  if(chosen === correct) {
+    el.classList.add('correct');
+    quizScore++;
+    spawnConfetti();
+    showFeedback(true, getPositive());
+  } else {
+    el.classList.add('wrong');
+    document.querySelectorAll('.quiz-opt').forEach(o => {
+      if(o.textContent === correct) o.classList.add('correct');
+    });
+    showFeedback(false, '😮 Almost! ' + explain);
+  }
+
+  const fb = document.getElementById('quiz-feedback');
+  fb.style.display = 'block';
+  fb.innerHTML = `<div class="tip-head">${chosen===correct?'✅ Correct!':'❌ Not quite!'}</div><div>${explain}</div>`;
+
+  quizQ++;
+  setTimeout(nextQuizQ, 2200);
+}
+
+// ===================== RESULTS =====================
+function showResults(game, score, total) {
+  currentGame = game;
+  const pct = score/total;
+  let stars = pct >= 0.8 ? 3 : pct >= 0.5 ? 2 : 1;
+  let title = stars===3?'Amazing!🎉':stars===2?'Well Done!👏':'Keep Trying!💪';
+  let msg = stars===3?'You\'re a Measurement Master! 🏆':stars===2?'Great effort! Play again to get 3 stars!':' Review the Learn section and try again!';
+  let mascot = stars===3?'🏆':stars===2?'😊':'😅';
+
+  document.getElementById('result-mascot').textContent = mascot;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-score').textContent = score + ' / ' + total;
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('result-stars').innerHTML = Array(stars).fill('<span class="star">⭐</span>').join('') + Array(3-stars).fill('<span class="star">☆</span>').join('');
+  document.getElementById('retry-btn').onclick = () => {
+    if(game==='match') startMatchGame();
+    else if(game==='ruler') startRulerGame();
+    else startQuiz();
+  };
+  if(stars===3) spawnConfetti(50);
+  showScreen('results');
+}
+
+// ===================== HELPERS =====================
+function updateLives(id, count) {
+  document.getElementById(id).textContent = '❤️'.repeat(Math.max(0,count)) + '🖤'.repeat(Math.max(0,3-count));
+}
+
+function showFeedback(correct, msg) {
+  const overlay = document.getElementById('feedback-overlay');
+  const msgEl = document.getElementById('feedback-msg');
+  msgEl.textContent = msg;
+  overlay.style.background = correct ? 'rgba(76,175,80,0.7)' : 'rgba(244,67,54,0.7)';
+  overlay.classList.add('show');
+  setTimeout(() => overlay.classList.remove('show'), 900);
+}
+
+function getPositive() {
+  const msgs = ['⭐ Brilliant!','🎉 Fantastic!','🌟 Superstar!','🏆 Correct!','🎯 Spot on!','🥇 Amazing!','✅ You got it!','🔥 Nailed it!','💫 Wonderful!','🦸 Hero!'];
+  return msgs[Math.floor(Math.random()*msgs.length)];
+}
+
+function spawnConfetti(count=30) {
+  const colors = ['#FF6B6B','#FFD600','#66BB6A','#4FC3F7','#FF9800','#E91E63','#9C27B0'];
+  for(let i=0;i<count;i++){
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.left = Math.random()*100 + 'vw';
+    el.style.top = '-20px';
+    el.style.background = colors[Math.floor(Math.random()*colors.length)];
+    el.style.animationDuration = (1.5+Math.random()*2) + 's';
+    el.style.animationDelay = Math.random()*0.8 + 's';
+    el.style.transform = `rotate(${Math.random()*360}deg)`;
+    el.style.width = el.style.height = (8+Math.random()*8)+'px';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 4000);
+  }
+}
+
+function shuffle(arr) {
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+// Init
+buildMMRuler();
+</script>
+</body>
+</html>
